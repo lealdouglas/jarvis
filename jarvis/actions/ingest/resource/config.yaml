@@ -1,0 +1,31 @@
+recurso:
+  tabela:
+    nome: 'accounts' # Nome da tabela
+    comentario: 'Tabela de contas de clientes' # Comentário sobre a tabela
+    owner: 'Douglas Leal' # Nome do dono da tabela
+    grupo_acesso: ['data_engineer'] #data_engineer, data_scientist, data_analyst, data_architect, data_steward
+  metadados:
+    coluna1:
+      nome: 'A'
+      comentario: ''
+      pii: ''
+    coluna2:
+      nome: 'B'
+      comentario: ''
+      pii: ''
+    coluna3:
+      nome: 'B'
+      comentario: ''
+      pii: ''
+  orquestracao:
+    tipo_processamento: 'batch' #batch, stream
+    executar_task_dataquality: 'sim'
+    scheduler:
+      cron_schedule: '*/5 * * * *' #cron schedule
+      timezone: 'America/Sao_Paulo'
+    email_notifications:
+      on_start: ['douglas.sleal@outlook.com']
+      on_success: ['douglas.sleal@outlook.com']
+      on_failure: ['douglas.sleal@outlook.com']
+  origem:
+    nome_topico_event_hub: 'teste'
