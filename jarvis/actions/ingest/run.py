@@ -56,11 +56,7 @@ def exec():
             'https://adb-2215575611652383.3.azuredatabricks.net/'
         )
         
-        file_path = os.path.join(
-            os.path.dirname(os.path.abspath(__file__))
-            + '/ingest_datacontract/',
-            'datacontract.yaml',
-        )
+        file_path = '/ingest_datacontract/datacontract.yaml'
 
         # properties = {}
         # Carregar o YAML e converter para objeto
