@@ -1,5 +1,5 @@
 import os
-import importlib
+import sys
 
 
 def run_actions(config_path):
