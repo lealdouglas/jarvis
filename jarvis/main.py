@@ -2,10 +2,7 @@ import os
 import sys
 
 
-def run_actions(config_path):
-    # Listar todos os arquivos na pasta
-
-    action = 'ingest'
+def run_actions(action, config_path):
 
     if action == 'ingest':
         # Importar o módulo de ingestão
@@ -13,7 +10,8 @@ def run_actions(config_path):
         run.exec(config_path)
 
 if __name__ == '__main__':
-    if len(sys.argv) != 2:
-        raise "Usage: python main.py <config_path>/datacontract.yaml"
-    config_path = sys.argv[1]
-    run_actions(config_path)
+    if len(sys.argv) == 3:
+        raise "Usage: python main.py action <config_path>/datacontract.yaml"
+    action = sys.argv[1]
+    config_path = sys.argv[2]
+    run_actions(action, config_path)
