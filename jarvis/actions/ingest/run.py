@@ -10,7 +10,7 @@ from contract.datacontract import *
 from actions.ingest.job_parameters import define_job_parameters
 
 
-def exec():
+def exec(config_path):
 
     """
     Função principal para ingestão de dados a partir de um arquivo de configuração YAML.
@@ -56,11 +56,10 @@ def exec():
             'https://adb-2215575611652383.3.azuredatabricks.net/'
         )
         
-        file_path = '/ingest_datacontract/datacontract.yaml'
 
         # properties = {}
         # Carregar o YAML e converter para objeto
-        with open(file_path, 'r') as file:
+        with open(config_path, 'r') as file:
             properties['datacontract'] = yaml.safe_load(file)
 
         # properties = datacontract_get_domain(properties)

@@ -1,34 +1,19 @@
-# import os
-# import importlib
+import os
+import importlib
 
 
-# def run_actions():
-#     # Listar todos os arquivos na pasta
+def run_actions(config_path):
+    # Listar todos os arquivos na pasta
 
-#     action = 'ingest'
+    action = 'ingest'
 
-#     if action == 'ingest':
-#         # Importar o módulo de ingestão
-#         from actions.ingest import run
+    if action == 'ingest':
+        # Importar o módulo de ingestão
+        from actions.ingest import run
+        run.exec(config_path)
 
-#         run.exec()
-
-
-# if __name__ == '__main__':
-#     run_actions()
-
-# script.py
-import yaml
-import sys
-
-def main(config_path):
-    with open(config_path, 'r') as file:
-        config = yaml.safe_load(file)
-        print("Config settings:", config)
-
-if __name__ == "__main__":
+if __name__ == '__main__':
     if len(sys.argv) != 2:
-        print("Usage: python script.py <config_path>")
-        sys.exit(1)
+        raise "Usage: python main.py <config_path>/datacontract.yaml"
     config_path = sys.argv[1]
-    main(config_path)
+    run_actions(config_path)
