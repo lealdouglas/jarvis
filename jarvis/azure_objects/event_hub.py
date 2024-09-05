@@ -12,29 +12,28 @@ from utils.helper import validate_args
 from utils.cons import SUBSCRIPTION_ID
 from utils.logger import log_info, log_error
 
-
 def get_eventhub_client() -> EventHubManagementClient:
     """
     Cria e retorna um cliente do Azure Event Hub Management.
+    Creates and returns an Azure Event Hub Management client.
     """
     return EventHubManagementClient(
         credential=auth_credential(), subscription_id=SUBSCRIPTION_ID
     )
 
-
 def get_eventhub_name(properties: dict) -> str:
     """
     Gera e retorna o nome do Event Hub com base nas propriedades fornecidas.
+    Generates and returns the Event Hub name based on the provided properties.
     """
     return f"topic-{properties['DOMAIN']}-{properties['datacontract']['ingest_workflow']['model']}"
-
 
 def get_container_name(properties: dict) -> str:
     """
     Gera e retorna o nome do container com base nas propriedades fornecidas.
+    Generates and returns the container name based on the provided properties.
     """
     return f"ctr{properties['DOMAIN']}raw"
-
 
 def create_eventhub(
     eventhub_client: EventHubManagementClient,
@@ -44,6 +43,7 @@ def create_eventhub(
 ) -> None:
     """
     Cria um Event Hub com as configurações especificadas.
+    Creates an Event Hub with the specified configurations.
     """
     RESOURCE_GROUP_NAME = properties['RESOURCE_GROUP_NAME']
     STORAGE_ACCOUNT_NAME = properties['STORAGE_ACCOUNT_NAME']
@@ -72,7 +72,6 @@ def create_eventhub(
     )
     log_info('Create EventHub: {}'.format(eventhub))
 
-
 def get_or_create_eventhub(
     eventhub_client: EventHubManagementClient,
     properties: dict,
@@ -80,18 +79,21 @@ def get_or_create_eventhub(
 ) -> None:
     """
     Tenta obter o Event Hub, se não existir, cria um novo.
+    Tries to get the Event Hub, if it doesn't exist, creates a new one.
     """
     RESOURCE_GROUP_NAME = properties['RESOURCE_GROUP_NAME']
     EVENTHUB_NAMESPACE_NAME = properties['EVENTHUB_NAMESPACE_NAME']
 
     try:
         # Tenta obter o Event Hub
+        # Tries to get the Event Hub
         eventhub = eventhub_client.event_hubs.get(
             RESOURCE_GROUP_NAME, EVENTHUB_NAMESPACE_NAME, eventhub_name
         )
         log_info('Topico Event Hub já existe: {}'.format(eventhub))
     except ResourceNotFoundError:
         # Cria o Event Hub se não existir
+        # Creates the Event Hub if it doesn't exist
         create_eventhub(
             eventhub_client,
             properties,
@@ -99,18 +101,21 @@ def get_or_create_eventhub(
             get_container_name(properties),
         )
         # Obtém o Event Hub criado
+        # Gets the created Event Hub
         eventhub = eventhub_client.event_hubs.get(
             RESOURCE_GROUP_NAME, EVENTHUB_NAMESPACE_NAME, eventhub_name
         )
         log_info('Get EventHub: {}'.format(eventhub))
 
-
 def create_event_hub_ingest(properties: dict) -> None:
     """
     Função principal para criar ou obter um Event Hub de ingestão com base nas propriedades fornecidas.
+    Main function to create or get an ingestion Event Hub based on the provided properties.
 
     Parâmetros:
     - properties (dict): Dicionário contendo as propriedades necessárias.
+    Parameters:
+    - properties (dict): Dictionary containing the necessary properties.
     """
     validate_args(
         [
