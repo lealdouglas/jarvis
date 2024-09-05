@@ -4,9 +4,12 @@ from unittest.mock import patch, MagicMock
 from databricks.sdk import WorkspaceClient
 from jarvis.databricks_objects.credential import work_credential
 
+
 @patch.dict(os.environ, {'HOST': 'https://test-host'})
 @patch('jarvis.databricks_objects.credential.CLIENT_ID', 'test-client-id')
-@patch('jarvis.databricks_objects.credential.CLIENT_SECRET', 'test-client-secret')
+@patch(
+    'jarvis.databricks_objects.credential.CLIENT_SECRET', 'test-client-secret'
+)
 @patch('jarvis.databricks_objects.credential.TENANT_ID', 'test-tenant-id')
 def test_work_credential():
     with patch('databricks.sdk.WorkspaceClient') as MockWorkspaceClient:
@@ -19,6 +22,6 @@ def test_work_credential():
             host='https://test-host',
             azure_client_id='test-client-id',
             azure_client_secret='test-client-secret',
-            azure_tenant_id='test-tenant-id'
+            azure_tenant_id='test-tenant-id',
         )
         assert client == mock_client_instance

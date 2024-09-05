@@ -2,7 +2,14 @@ import pytest
 from unittest.mock import patch
 
 # Importar as constantes do arquivo cons.py
-from cons import CLIENT_ID, TENANT_ID, CLIENT_SECRET, SUBSCRIPTION_ID, RESOURCE_GROUP_NAME
+from cons import (
+    CLIENT_ID,
+    TENANT_ID,
+    CLIENT_SECRET,
+    SUBSCRIPTION_ID,
+    RESOURCE_GROUP_NAME,
+)
+
 
 def test_constants():
     assert CLIENT_ID == 'a08dc7fd-4c85-45f6-a23d-4c3f3ddba5a3'

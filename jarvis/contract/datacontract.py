@@ -10,6 +10,7 @@ def get_value(properties: dict, keys: list, force_error: bool = False) -> str:
     Parâmetros:
     - properties (dict): O dicionário de onde o valor será obtido.
     - keys (list): Uma lista de chaves que representam o caminho até o valor desejado.
+    - force_error (bool): Se True, lança um erro se a chave não for encontrada.
 
     Retorno:
     - str: O valor da chave se existir, caso contrário, uma string vazia.
@@ -21,63 +22,78 @@ def get_value(properties: dict, keys: list, force_error: bool = False) -> str:
                 value = value[key]
             else:
                 raise KeyError(f"Key '{key}' not found in properties.")
-        value = '' if value == None else value
+        value = '' if value is None else value
         return value
     except KeyError as e:
-        if force_error == True:
+        if force_error:
             raise log_error(f'KeyError: {e}')
         return ''
     except Exception as e:
         raise log_error(f'An unexpected error occurred: {e}')
 
 
-def datacontract_get_domain(properties: dict):
+def get_domain(properties: dict) -> dict:
     """
     Função para retornar o domínio do primeiro modelo encontrado.
 
-    Esta função realiza as seguintes operações:
-    1. Acessa a chave 'models' no dicionário fornecido.
-    2. Obtém o primeiro modelo encontrado dentro de 'models'.
-    3. Retorna o valor do campo 'domain' do primeiro modelo, se existir.
-
-    Exemplo de uso:
-    ```python
-    domain = get_domain(datacontract)
-    ```
+    Parâmetros:
+    - properties (dict): O dicionário de onde o domínio será obtido.
 
     Retorno:
-    - O valor do campo 'domain' do primeiro modelo encontrado, ou None se não existir.
+    - dict: O dicionário original com o domínio adicionado.
     """
-
     try:
         return {
             **properties,
             'DOMAIN': properties['datacontract']['info']['domain'],
         }
-
     except (KeyError, StopIteration) as e:
         raise log_error(f'Error: {e}')
         return None
 
 
+def create_event_hub(properties: dict):
+    """
+    Função para criar um Event Hub.
+
+    Parâmetros:
+    - properties (dict): O dicionário de propriedades necessário para criar o Event Hub.
+    """
+    log_info('Creating Event Hub...')
+    create_event_hub_ingest(properties)
+    log_info('Event Hub created successfully.')
+
+
+def create_databricks_workflow(properties: dict):
+    """
+    Função para criar um workflow no Databricks.
+
+    Parâmetros:
+    - properties (dict): O dicionário de propriedades necessário para criar o workflow.
+    """
+    log_info('Creating Workflow Databricks...')
+    create_job_ingest(properties)
+    log_info('Workflow Databricks created successfully.')
+
+
 def datacontract_ingest_create_workflow(properties: dict):
+    """
+    Função para criar workflows de ingestão com base nas propriedades fornecidas.
+
+    Parâmetros:
+    - properties (dict): O dicionário de propriedades necessário para criar os workflows.
+    """
     try:
-        # Validar se recurso.origem.nome_topico_event_hub é igual a 'nome_topico_event_hub'
         if (
             properties['datacontract']['ingest_workflow']['source']['type']
             == 'eventhub'
         ):
-            log_info('Creating Event Hub...')
-            create_event_hub_ingest(properties)
-            log_info('Event Hub created successfully.')
-
-        if (
+            create_event_hub(properties)
+        elif (
             properties['datacontract']['servers']['development']['type']
             == 'databricks'
         ):
-            log_info('Creating Workflow Databricks...')
-            create_job_ingest(properties)
-            log_info('Workflow Databricks created successfully.')
+            create_databricks_workflow(properties)
         else:
             raise ValueError(
                 f"Error: Invalid source type '{properties['datacontract']['ingest_workflow']['source']['type']}'"

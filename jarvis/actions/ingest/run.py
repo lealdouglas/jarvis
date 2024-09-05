@@ -55,7 +55,6 @@ def exec(config_path):
         os.environ['HOST'] = str(
             'https://adb-2215575611652383.3.azuredatabricks.net/'
         )
-        
 
         # properties = {}
         # Carregar o YAML e converter para objeto

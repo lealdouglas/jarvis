@@ -1,11 +1,72 @@
 import os
-import importlib
 from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.databricks import AzureDatabricksManagementClient
 from azure_objects.credential import auth_credential
 from databricks_objects.credential import work_credential
-from utils.cons import *
+from utils.cons import SUBSCRIPTION_ID, validate_args
 from utils.logger import log_error, log_info
+
+
+def get_resource_group_name(client, domain: str) -> str:
+    """
+    Recupera o nome do grupo de recursos que contém a nomenclatura especificada.
+    """
+    group_list = client.resource_groups.list()
+    for group in list(group_list):
+        if domain in group.name:
+            return group.name
+    return None
+
+
+def get_resources(client, resource_group_name: str) -> list:
+    """
+    Recupera a lista de recursos dentro do grupo de recursos especificado.
+    """
+    return client.resources.list_by_resource_group(
+        resource_group_name, expand='createdTime,changedTime'
+    )
+
+
+def get_resource_names(resources: list) -> dict:
+    """
+    Identifica e armazena os nomes dos recursos do tipo EventHub Namespace, Storage Account e Databricks Workspace.
+    """
+    resource_names = {
+        'EVENTHUB_NAMESPACE_NAME': None,
+        'STORAGE_ACCOUNT_NAME': None,
+        'WORKSPACE_ADB_NAME': None,
+    }
+    for resource in list(resources):
+        if resource.type == 'Microsoft.EventHub/namespaces':
+            resource_names['EVENTHUB_NAMESPACE_NAME'] = str(resource.name)
+        elif resource.type == 'Microsoft.Storage/storageAccounts':
+            resource_names['STORAGE_ACCOUNT_NAME'] = str(resource.name)
+        elif resource.type == 'Microsoft.Databricks/workspaces':
+            resource_names['WORKSPACE_ADB_NAME'] = str(resource.name)
+    return resource_names
+
+
+def set_databricks_workspace_url(
+    client, resource_group_name: str, workspace_name: str
+):
+    """
+    Recupera a URL do workspace do Databricks e define a variável de ambiente 'HOST'.
+    """
+    response = client.workspaces.get(
+        resource_group_name=resource_group_name,
+        workspace_name=workspace_name,
+    )
+    os.environ['HOST'] = str(response.workspace_url)
+
+
+def get_cluster_id(work_credential, domain: str) -> str:
+    """
+    Recupera a lista de clusters do Databricks e encontra o cluster que contém a nomenclatura especificada.
+    """
+    for cluster in work_credential.clusters.list():
+        if domain in cluster.cluster_name:
+            return str(cluster.cluster_id)
+    return None
 
 
 def variables(properties: dict) -> dict:
@@ -24,236 +85,50 @@ def variables(properties: dict) -> dict:
     9. Retorna um dicionário com os nomes dos recursos encontrados.
 
     Parâmetros:
-    - domain (str): O dominio usada para identificar os recursos.
+    - properties (dict): Dicionário contendo as propriedades necessárias.
 
     Retorno:
-    - dict[str, str]: Um dicionário contendo os nomes dos recursos encontrados.
-
-    Exemplo de uso:
-    ```python
-    variaveis = variables("domain")
-    print(variaveis)
-    ```
+    - dict: Um dicionário contendo os nomes dos recursos encontrados.
     """
-
-    validate_args(
-        [
-            'DOMAIN',
-        ],
-        properties,
-    )
-
-    # Inicializa variáveis para armazenar nomes de recursos
-    RESOURCE_GROUP_NAME = None
-    EVENTHUB_NAMESPACE_NAME = None
-    STORAGE_ACCOUNT_NAME = None
-    WORKSPACE_ADB_NAME = None
-    CLUSTER_ID = None
+    validate_args(['DOMAIN'], properties)
 
     # Cria um cliente do Azure Resource Management
-    client = ResourceManagementClient(
+    resource_client = ResourceManagementClient(
         credential=auth_credential(), subscription_id=SUBSCRIPTION_ID
     )
 
-    # Recupera a lista de grupos de recursos
-    group_list = client.resource_groups.list()
-
-    # Encontra o grupo de recursos que contém a nomenclatura especificada
-    for group in list(group_list):
-        if properties['DOMAIN'] in group.name:
-            RESOURCE_GROUP_NAME = group.name
-            break
-
-    # Recupera a lista de recursos dentro do grupo de recursos encontrado
-    resource_list = client.resources.list_by_resource_group(
-        RESOURCE_GROUP_NAME, expand='createdTime,changedTime'
+    # Recupera o nome do grupo de recursos
+    resource_group_name = get_resource_group_name(
+        resource_client, properties['DOMAIN']
     )
 
-    # Identifica e armazena os nomes dos recursos do tipo EventHub Namespace, Storage Account e Databricks Workspace
-    for resource in list(resource_list):
-        EVENTHUB_NAMESPACE_NAME = (
-            str(resource.name)
-            if resource.type == 'Microsoft.EventHub/namespaces'
-            else EVENTHUB_NAMESPACE_NAME
-        )
-        STORAGE_ACCOUNT_NAME = (
-            str(resource.name)
-            if resource.type == 'Microsoft.Storage/storageAccounts'
-            else STORAGE_ACCOUNT_NAME
-        )
-        WORKSPACE_ADB_NAME = (
-            str(resource.name)
-            if resource.type == 'Microsoft.Databricks/workspaces'
-            else WORKSPACE_ADB_NAME
-        )
+    # Recupera a lista de recursos dentro do grupo de recursos encontrado
+    resources = get_resources(resource_client, resource_group_name)
+
+    # Identifica e armazena os nomes dos recursos
+    resource_names = get_resource_names(resources)
 
     # Cria um cliente do Azure Databricks Management
-    client = AzureDatabricksManagementClient(
+    databricks_client = AzureDatabricksManagementClient(
         credential=auth_credential(), subscription_id=SUBSCRIPTION_ID
     )
 
     # Recupera a URL do workspace do Databricks e define a variável de ambiente 'HOST'
-    response = client.workspaces.get(
-        resource_group_name=RESOURCE_GROUP_NAME,
-        workspace_name=WORKSPACE_ADB_NAME,
+    set_databricks_workspace_url(
+        databricks_client,
+        resource_group_name,
+        resource_names['WORKSPACE_ADB_NAME'],
     )
 
-    os.environ['HOST'] = str(response.workspace_url)
-
-    # Recupera a lista de clusters do Databricks e encontra o cluster que contém a nomenclatura especificada
-    for cluster in work_credential().clusters.list():
-        CLUSTER_ID = (
-            str(cluster.cluster_id)
-            if properties['DOMAIN'] in cluster.cluster_name
-            else CLUSTER_ID
-        )
+    # Recupera o ID do cluster do Databricks
+    cluster_id = get_cluster_id(work_credential(), properties['DOMAIN'])
 
     # Retorna um dicionário com os nomes dos recursos encontrados
     return {
         **properties,
-        'RESOURCE_GROUP_NAME': RESOURCE_GROUP_NAME,
-        'EVENTHUB_NAMESPACE_NAME': EVENTHUB_NAMESPACE_NAME,
-        'STORAGE_ACCOUNT_NAME': STORAGE_ACCOUNT_NAME,
-        'WORKSPACE_ADB_NAME': WORKSPACE_ADB_NAME,
-        'CLUSTER_ID': CLUSTER_ID,
+        'RESOURCE_GROUP_NAME': resource_group_name,
+        'EVENTHUB_NAMESPACE_NAME': resource_names['EVENTHUB_NAMESPACE_NAME'],
+        'STORAGE_ACCOUNT_NAME': resource_names['STORAGE_ACCOUNT_NAME'],
+        'WORKSPACE_ADB_NAME': resource_names['WORKSPACE_ADB_NAME'],
+        'CLUSTER_ID': cluster_id,
     }
-
-
-# import os
-# import importlib
-# from azure.mgmt.resource import ResourceManagementClient
-# from azure.mgmt.databricks import AzureDatabricksManagementClient
-# from azure_objects.credential import auth_credential
-# from databricks_objects.credential import work_credential
-# from utils.cons import *
-# from utils.logger import log_error, log_info
-
-
-# def variables(properties['DOMAIN']: str) -> dict[str, str]:
-#     # Listar todos os arquivos na pasta
-
-#     RESOURCE_GROUP_NAME = None
-#     EVENTHUB_NAMESPACE_NAME = None
-#     STORAGE_ACCOUNT_NAME = None
-#     WORKSPACE_ADB_NAME = None
-#     CLUSTER_ID = None
-
-#     client = ResourceManagementClient(
-#         credential=auth_credential(), subscription_id=SUBSCRIPTION_ID
-#     )
-
-#     # Retrieve the list of resource groups
-#     group_list = client.resource_groups.list()
-
-#     # Show the groups in formatted output
-#     column_width = 40
-
-#     # print("Resource Group".ljust(column_width) + "Location")
-#     # print("-" * (column_width * 2))
-
-#     # EVENTHUB_NAMESPACE_NAME = [str(resource.name) for resource in list(resource_list) if resource.type == properties['DOMAIN'] in group.name]
-#     for group in list(group_list):
-#         if properties['DOMAIN'] in group.name:
-#             RESOURCE_GROUP_NAME = group.name
-#             break
-
-#     # Retrieve the list of resources in "myResourceGroup" (change to any name desired).
-#     # The expand argument includes additional properties in the output.
-#     resource_list = client.resources.list_by_resource_group(
-#         RESOURCE_GROUP_NAME, expand='createdTime,changedTime'
-#     )
-
-#     for resource in list(resource_list):
-#         EVENTHUB_NAMESPACE_NAME = (
-#             str(resource.name)
-#             if resource.type == 'Microsoft.EventHub/namespaces'
-#             else EVENTHUB_NAMESPACE_NAME
-#         )
-#         STORAGE_ACCOUNT_NAME = (
-#             str(resource.name)
-#             if resource.type == 'Microsoft.Storage/storageAccounts'
-#             else STORAGE_ACCOUNT_NAME
-#         )
-#         WORKSPACE_ADB_NAME = (
-#             str(resource.name)
-#             if resource.type == 'Microsoft.Databricks/workspaces'
-#             else WORKSPACE_ADB_NAME
-#         )
-
-#     client = AzureDatabricksManagementClient(
-#         credential=auth_credential(), subscription_id=SUBSCRIPTION_ID
-#     )
-
-#     response = client.workspaces.get(
-#         resource_group_name=RESOURCE_GROUP_NAME,
-#         workspace_name=WORKSPACE_ADB_NAME,
-#     )
-
-#     os.environ['HOST'] = str(response.workspace_url)
-#     for cluster in work_credential().clusters.list():
-#         CLUSTER_ID = (
-#             str(cluster.cluster_id)
-#             if properties['DOMAIN'] in cluster.cluster_name
-#             else CLUSTER_ID
-#         )
-
-#     return {
-#         'RESOURCE_GROUP_NAME': RESOURCE_GROUP_NAME,
-#         'EVENTHUB_NAMESPACE_NAME': EVENTHUB_NAMESPACE_NAME,
-#         'STORAGE_ACCOUNT_NAME': STORAGE_ACCOUNT_NAME,
-#         'WORKSPACE_ADB_NAME': WORKSPACE_ADB_NAME,
-#         'CLUSTER_ID': CLUSTER_ID,
-#     }
-
-#     # log_info(eventhub_namespace_name)
-#     # log_info(eventhub_namespace_name)
-#     # log_info(storage_account_name)
-#     # log_info(workspace_adb_name)
-#     # log_info(workspace_url)
-#     # log_info(cluster_id)
-
-#     # # Show the groups in formatted output
-#     # column_width = 36
-
-#     # # print("Resource".ljust(column_width) + "Type".ljust(column_width)
-#     # #     + "Create date".ljust(column_width) + "Change date".ljust(column_width))
-#     # # print("-" * (column_width * 4))
-
-#     # eventhub_namespace = None
-#     # eventhub_namespace_name = None
-#     # for resource in list(resource_list):
-#     #     # print(f"{resource.name:<{column_width}}{resource.type:<{column_width}}"
-#     #     #     f"{str(resource.created_time):<{column_width}}{str(resource.changed_time):<{column_width}}")
-#     #     if 'Microsoft.EventHub/namespaces' == resource.type:
-#     #         eventhub_namespace_name = resource.name
-#     #     if 'Microsoft.Storage/storageAccounts' == resource.type:
-#     #         storage_account_name = resource.name
-#     #     if 'Microsoft.Databricks/workspaces' == resource.type:
-#     #         workspace_adb_name = resource.name
-
-#     # client = AzureDatabricksManagementClient(
-#     #     credential=auth_credential(), subscription_id=SUBSCRIPTION_ID
-#     # )
-
-#     # response = client.workspaces.get(
-#     #     resource_group_name=RESOURCE_GROUP_NAME,
-#     #     workspace_name=workspace_adb_name,
-#     # )
-
-#     # workspace_url = response.workspace_url
-
-#     # os.environ['HOST'] = str(workspace_url)
-#     # w = work_credential()
-
-#     # for cluster in w.clusters.list():
-#     #     if 'strife' in cluster.cluster_name:
-#     #         cluster_id = cluster.cluster_id
-
-#     # log_info('Variaveis importantes'.ljust(column_width) + 'valor')
-#     # log_info('-' * (column_width * 2))
-#     # log_info(eventhub_namespace_name)
-#     # log_info(eventhub_namespace_name)
-#     # log_info(storage_account_name)
-#     # log_info(workspace_adb_name)
-#     # log_info(workspace_url)
-#     # log_info(cluster_id)
