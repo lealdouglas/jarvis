@@ -8,7 +8,8 @@ def run_actions(action, config_path):
         # Importar o módulo de ingestão
         from actions.ingest import run
 
-        run.exec(config_path)
+        print('Ingesting data...')
+        # run.exec(config_path)
 
 
 if __name__ == '__main__':
