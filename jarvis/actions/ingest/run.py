@@ -56,11 +56,11 @@ def exec(config_path):
         #     'https://adb-2215575611652383.3.azuredatabricks.net/'
         # )
 
-        # properties = {}
+        properties = {}
         # Carregar o YAML e converter para objeto
         with open(config_path, 'r') as file:
             properties['datacontract'] = yaml.safe_load(file)
-            
+
         datacontract_ingest_create_workflow(
             define_job_parameters(variables(properties))
         )
