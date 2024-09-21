@@ -102,7 +102,8 @@ def datacontract_ingest_create_workflow(properties: dict):
     try:
         if properties['datacontract']['ingest_workflow']['source']['type'] == 'eventhub':
             create_event_hub(properties)
-        elif properties['datacontract']['servers']['development']['type'] == 'databricks':
+
+        if properties['datacontract']['servers']['development']['type'] == 'databricks':
             create_databricks_workflow(properties)
         else:
             raise ValueError(

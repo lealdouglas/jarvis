@@ -9,7 +9,7 @@ def run_actions(action, config_path):
         from actions.ingest import run
 
         print('Ingesting data...')
-        # run.exec(config_path)
+        run.exec(config_path)
 
 
 if __name__ == '__main__':

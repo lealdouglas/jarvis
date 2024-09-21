@@ -18,7 +18,7 @@ def get_default_parameters(properties: dict[str, any]) -> list[str]:
         '-storage_name_src',
         properties['STORAGE_ACCOUNT_NAME'],
         '-container_src',
-        f"ctr{properties['DOMAIN']}raw",
+        f"ctrd{properties['DOMAIN']}raw",
         '-file_resource',
         'adls',
         '-type_run',

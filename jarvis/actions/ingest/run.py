@@ -44,33 +44,25 @@ def exec(config_path):
     """
     try:
 
-        properties = {
-            'RESOURCE_GROUP_NAME': 'rsgstrifedtm',
-            'EVENTHUB_NAMESPACE_NAME': 'ethstrifedtm',
-            'STORAGE_ACCOUNT_NAME': 'sta2strifedtm',
-            'WORKSPACE_ADB_NAME': 'adbstrifedtm',
-            'CLUSTER_ID': '0831-142222-5yguj04h',
-        }
+        # properties = {
+        #     'RESOURCE_GROUP_NAME': 'rsgstrifedtm',
+        #     'EVENTHUB_NAMESPACE_NAME': 'ethstrifedtm',
+        #     'STORAGE_ACCOUNT_NAME': 'sta2strifedtm',
+        #     'WORKSPACE_ADB_NAME': 'adbstrifedtm',
+        #     'CLUSTER_ID': '0831-142222-5yguj04h',
+        # }
 
-        os.environ['HOST'] = str(
-            'https://adb-2215575611652383.3.azuredatabricks.net/'
-        )
+        # os.environ['HOST'] = str(
+        #     'https://adb-2215575611652383.3.azuredatabricks.net/'
+        # )
 
         # properties = {}
         # Carregar o YAML e converter para objeto
         with open(config_path, 'r') as file:
             properties['datacontract'] = yaml.safe_load(file)
-
-        # properties = datacontract_get_domain(properties)
-
-        # properties = variables(properties)
-
-        # properties = define_job_parameters(properties)
-
-        # datacontract_ingest_create_workflow(properties)
-
+            
         datacontract_ingest_create_workflow(
-            define_job_parameters(datacontract_get_domain(properties))
+            define_job_parameters(variables(properties))
         )
 
     except Exception as e:

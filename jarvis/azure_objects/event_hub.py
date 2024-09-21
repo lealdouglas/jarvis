@@ -33,7 +33,7 @@ def get_container_name(properties: dict) -> str:
     Gera e retorna o nome do container com base nas propriedades fornecidas.
     Generates and returns the container name based on the provided properties.
     """
-    return f"ctr{properties['DOMAIN']}raw"
+    return f"ctrd{properties['DOMAIN']}raw"
 
 def create_eventhub(
     eventhub_client: EventHubManagementClient,
