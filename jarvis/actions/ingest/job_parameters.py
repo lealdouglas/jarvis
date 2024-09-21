@@ -1,13 +1,20 @@
 from contract.datacontract import get_value
 
+
 def get_source_path(properties: dict[str, any]) -> str:
     """
     Retorna o caminho da fonte com base nas propriedades fornecidas.
     Returns the source path based on the provided properties.
     """
-    if properties['datacontract']['ingest_workflow']['source']['type'] == 'eventhub':
+    if (
+        properties['datacontract']['ingest_workflow']['source']['type']
+        == 'eventhub'
+    ):
         return f"/{properties['EVENTHUB_NAMESPACE_NAME']}/topic-{properties['DOMAIN']}-{properties['datacontract']['ingest_workflow']['model']}"
-    return get_value(properties, ['datacontract', 'ingest_workflow', 'model'], True)
+    return get_value(
+        properties, ['datacontract', 'ingest_workflow', 'model'], True
+    )
+
 
 def get_default_parameters(properties: dict[str, any]) -> list[str]:
     """
@@ -30,33 +37,54 @@ def get_default_parameters(properties: dict[str, any]) -> list[str]:
         '-schema_name',
         'bronze',
         '-table_name',
-        get_value(properties, ['datacontract', 'ingest_workflow', 'model'], True),
+        get_value(
+            properties, ['datacontract', 'ingest_workflow', 'model'], True
+        ),
     ]
 
-def get_carlton_source_parameters(properties: dict[str, any], src_path: str) -> list[str]:
+
+def get_carlton_source_parameters(
+    properties: dict[str, any], src_path: str
+) -> list[str]:
     """
     Retorna a lista de parâmetros específicos do Carlton Source.
     Returns the specific parameters list for Carlton Source.
     """
     return [
         '-file_extension',
-        get_value(properties, ['datacontract', 'ingest_workflow', 'source', 'format'], True),
+        get_value(
+            properties,
+            ['datacontract', 'ingest_workflow', 'source', 'format'],
+            True,
+        ),
         '-path_src',
         src_path,
         '-file_header',
-        get_value(properties, ['datacontract', 'ingest_workflow', 'source', 'header']),
+        get_value(
+            properties, ['datacontract', 'ingest_workflow', 'source', 'header']
+        ),
         '-file_delimiter',
-        get_value(properties, ['datacontract', 'ingest_workflow', 'source', 'delimiter']),
+        get_value(
+            properties,
+            ['datacontract', 'ingest_workflow', 'source', 'delimiter'],
+        ),
     ]
+
 
 def define_job_parameters(properties: dict[str, any]) -> dict[str, any]:
     """
     Define os parâmetros do trabalho de ingestão com base nas propriedades fornecidas.
     Defines the ingestion job parameters based on the provided properties.
     """
-    src_path = get_source_path(properties)  # Obtém o caminho da fonte / Gets the source path
-    default_lst = get_default_parameters(properties)  # Obtém os parâmetros padrão / Gets the default parameters
-    carlton_source_parameters = get_carlton_source_parameters(properties, src_path)  # Obtém os parâmetros específicos do Carlton Source / Gets the specific parameters for Carlton Source
+    src_path = get_source_path(
+        properties
+    )  # Obtém o caminho da fonte / Gets the source path
+    default_lst = get_default_parameters(
+        properties
+    )  # Obtém os parâmetros padrão / Gets the default parameters
+    carlton_source_parameters = get_carlton_source_parameters(
+        properties, src_path
+    )  # Obtém os parâmetros específicos do Carlton Source / Gets the specific parameters for Carlton Source
 
     return {
         **properties,

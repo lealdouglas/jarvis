@@ -11,17 +11,20 @@ from utils.helper import validate_args
 from utils.logger import log_info, log_error
 from databricks.sdk.service.compute import PythonPyPiLibrary, Library
 
+
 def validate_properties(properties: dict) -> None:
     """
     Valida se as propriedades necessárias estão presentes.
     """
     validate_args(['CLUSTER_ID', 'CARLTON_SOURCE_PARAMETERS'], properties)
 
+
 def get_job_name(properties: dict) -> str:
     """
     Gera e retorna o nome do job com base nas propriedades fornecidas.
     """
     return f"ingest-{properties['DOMAIN']}-{properties['datacontract']['ingest_workflow']['model']}"
+
 
 def delete_existing_job(w, job_name: str) -> None:
     """
@@ -36,6 +39,7 @@ def delete_existing_job(w, job_name: str) -> None:
         log_error(f'Error deleting existing job: {e}')
         raise
 
+
 def create_new_job(w, job_name: str, properties: dict) -> None:
     """
     Cria um novo job de ingestão no Databricks.
@@ -44,14 +48,22 @@ def create_new_job(w, job_name: str, properties: dict) -> None:
         job = w.jobs.create(
             name=job_name,
             schedule=CronSchedule(
-                quartz_cron_expression=properties['datacontract']['servicelevels']['frequency']['cron'],
+                quartz_cron_expression=properties['datacontract'][
+                    'servicelevels'
+                ]['frequency']['cron'],
                 timezone_id='America/Sao_Paulo',
                 pause_status=PauseStatus('PAUSED'),
             ),
             email_notifications=JobEmailNotifications(
-                on_start=properties['datacontract']['ingest_workflow']['email_notifications']['on_start'],
-                on_success=properties['datacontract']['ingest_workflow']['email_notifications']['on_success'],
-                on_failure=properties['datacontract']['ingest_workflow']['email_notifications']['on_failure'],
+                on_start=properties['datacontract']['ingest_workflow'][
+                    'email_notifications'
+                ]['on_start'],
+                on_success=properties['datacontract']['ingest_workflow'][
+                    'email_notifications'
+                ]['on_success'],
+                on_failure=properties['datacontract']['ingest_workflow'][
+                    'email_notifications'
+                ]['on_failure'],
             ),
             tasks=[
                 Task(
@@ -78,6 +90,7 @@ def create_new_job(w, job_name: str, properties: dict) -> None:
     except Exception as e:
         log_error(f'Error creating job: {e}')
         raise
+
 
 def create_job_ingest(properties: dict[str, str]) -> None:
     """

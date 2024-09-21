@@ -18,6 +18,9 @@ def validate_args(args_nedeed: list, args_user: dict):
 
     for arg in args_nedeed:
         if arg not in args_user:
-            raise log_error(
+            log_error(
+                f'Nao foi possivel localizar o parametro: {arg} . Por favor adicionar'
+            )
+            raise Exception(
                 f'Nao foi possivel localizar o parametro: {arg} . Por favor adicionar'
             )

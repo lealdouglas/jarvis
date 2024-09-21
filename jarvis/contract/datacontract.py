@@ -2,6 +2,7 @@ from azure_objects.event_hub import create_event_hub_ingest
 from databricks_objects.workflow import create_job_ingest
 from utils.logger import log_error, log_info
 
+
 def get_value(properties: dict, keys: list, force_error: bool = False) -> str:
     """
     Função para obter o valor de uma chave aninhada em um dicionário.
@@ -37,6 +38,7 @@ def get_value(properties: dict, keys: list, force_error: bool = False) -> str:
     except Exception as e:
         raise log_error(f'An unexpected error occurred: {e}')
 
+
 def get_domain(properties: dict) -> dict:
     """
     Função para retornar o domínio do primeiro modelo encontrado.
@@ -61,6 +63,7 @@ def get_domain(properties: dict) -> dict:
         raise log_error(f'Error: {e}')
         return None
 
+
 def create_event_hub(properties: dict):
     """
     Função para criar um Event Hub.
@@ -74,6 +77,7 @@ def create_event_hub(properties: dict):
     log_info('Creating Event Hub...')
     create_event_hub_ingest(properties)
     log_info('Event Hub created successfully.')
+
 
 def create_databricks_workflow(properties: dict):
     """
@@ -89,6 +93,7 @@ def create_databricks_workflow(properties: dict):
     create_job_ingest(properties)
     log_info('Workflow Databricks created successfully.')
 
+
 def datacontract_ingest_create_workflow(properties: dict):
     """
     Função para criar workflows de ingestão com base nas propriedades fornecidas.
@@ -100,10 +105,16 @@ def datacontract_ingest_create_workflow(properties: dict):
     - properties (dict): The dictionary of properties needed to create the workflows.
     """
     try:
-        if properties['datacontract']['ingest_workflow']['source']['type'] == 'eventhub':
+        if (
+            properties['datacontract']['ingest_workflow']['source']['type']
+            == 'eventhub'
+        ):
             create_event_hub(properties)
 
-        if properties['datacontract']['servers']['development']['type'] == 'databricks':
+        if (
+            properties['datacontract']['servers']['development']['type']
+            == 'databricks'
+        ):
             create_databricks_workflow(properties)
         else:
             raise ValueError(

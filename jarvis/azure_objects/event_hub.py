@@ -12,6 +12,7 @@ from utils.helper import validate_args
 from utils.cons import SUBSCRIPTION_ID
 from utils.logger import log_info, log_error
 
+
 def get_eventhub_client() -> EventHubManagementClient:
     """
     Cria e retorna um cliente do Azure Event Hub Management.
@@ -21,6 +22,7 @@ def get_eventhub_client() -> EventHubManagementClient:
         credential=auth_credential(), subscription_id=SUBSCRIPTION_ID
     )
 
+
 def get_eventhub_name(properties: dict) -> str:
     """
     Gera e retorna o nome do Event Hub com base nas propriedades fornecidas.
@@ -28,12 +30,14 @@ def get_eventhub_name(properties: dict) -> str:
     """
     return f"topic-{properties['DOMAIN']}-{properties['datacontract']['ingest_workflow']['model']}"
 
+
 def get_container_name(properties: dict) -> str:
     """
     Gera e retorna o nome do container com base nas propriedades fornecidas.
     Generates and returns the container name based on the provided properties.
     """
     return f"ctrd{properties['DOMAIN']}raw"
+
 
 def create_eventhub(
     eventhub_client: EventHubManagementClient,
@@ -72,6 +76,7 @@ def create_eventhub(
     )
     log_info('Create EventHub: {}'.format(eventhub))
 
+
 def get_or_create_eventhub(
     eventhub_client: EventHubManagementClient,
     properties: dict,
@@ -106,6 +111,7 @@ def get_or_create_eventhub(
             RESOURCE_GROUP_NAME, EVENTHUB_NAMESPACE_NAME, eventhub_name
         )
         log_info('Get EventHub: {}'.format(eventhub))
+
 
 def create_event_hub_ingest(properties: dict) -> None:
     """
