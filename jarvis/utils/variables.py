@@ -3,7 +3,8 @@ from azure.mgmt.resource import ResourceManagementClient
 from azure.mgmt.databricks import AzureDatabricksManagementClient
 from azure_objects.credential import auth_credential
 from databricks_objects.credential import work_credential
-from utils.cons import SUBSCRIPTION_ID, validate_args
+from utils.cons import SUBSCRIPTION_ID
+from utils.helper import validate_args
 from utils.logger import log_error, log_info
 
 
