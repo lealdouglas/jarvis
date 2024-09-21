@@ -1,35 +1,100 @@
 # Jarvis
 
 Framework responsável por criar componentes de plataforma e pipelines de dados.
-Framework responsible for creating platform components and data pipelines.
 
-## Índice / Table of Contents
+## Índice
 
-- [Introdução / Introduction](#introdução--introduction)
-- [Instalação / Installation](#instalação--installation)
-- [Uso / Usage](#uso--usage)
-- [Estrutura do Projeto / Project Structure](#estrutura-do-projeto--project-structure)
-- [Contribuição / Contributing](#contribuição--contributing)
-- [Licença / License](#licença--license)
+- [Introdução](#introdução)
+- [Instalação](#instalação)
+- [Uso](#uso)
+- [Estrutura do Projeto](#estrutura-do-projeto)
+- [Contribuição](#contribuição)
+- [Licença](#licença)
 
-## Introdução / Introduction
+## Introdução
 
 Jarvis é um framework projetado para facilitar a criação de componentes de plataforma e pipelines de dados. Ele fornece uma estrutura robusta e flexível para desenvolver e gerenciar fluxos de dados complexos.
 
-Jarvis is a framework designed to facilitate the creation of platform components and data pipelines. It provides a robust and flexible structure for developing and managing complex data flows.
-
-## Instalação / Installation
+## Instalação
 
 Para instalar o Jarvis, siga os passos abaixo:
-To install Jarvis, follow the steps below:
 
 ```bash
-# Clone o repositório / Clone the repository
+# Clone o repositório
 git clone https://github.com/seu-usuario/jarvis.git
 
-# Navegue até o diretório do projeto / Navigate to the project directory
+# Navegue até o diretório do projeto
 cd jarvis
 
-# Instale as dependências / Install dependencies
+# Instale as dependências
 pip install -r requirements.txt
 ```
+
+## Uso
+
+Aqui está um exemplo de como usar o Jarvis
+
+```python
+from jarvis import Jarvis
+
+# Inicialize o framework
+jarvis = Jarvis()
+
+# Crie um componente de plataforma
+component = jarvis.create_component('component_name')
+
+# Execute um pipeline de dados
+pipeline = jarvis.run_pipeline('pipeline_name')
+```
+
+## Estrutura do Projeto
+
+A estrutura do projeto é organizada da seguinte forma:
+
+jarvis/
+├── jarvis/
+│ ├── actions/
+│ │ ├── ingest/
+│ │ │ ├── job_parameters.py
+│ │ │ ├── run.py
+│ │ │ └── **init**.py
+│ │ ├── model_transform/
+│ │ │ └── databricks/
+│ │ │ └── asset_bundles/
+│ │ │ └── **init**.py
+│ ├── azure_objects/
+│ │ ├── credential.py
+│ │ ├── event_hub.py
+│ │ └── **init**.py
+│ ├── ci/
+│ │ └── cli.py
+│ ├── contract/
+│ │ └── datacontract.py
+│ ├── databricks_objects/
+│ │ ├── credential.py
+│ │ ├── workflow.py
+│ │ └── **init**.py
+│ ├── utils/
+│ │ ├── cons.py
+│ │ ├── helper.py
+│ │ ├── logger.py
+│ │ └── variables.py
+│ ├── main.py
+│ └── **init**.py
+├── tests/
+│ ├── test_azure_credential.py
+│ ├── test_cli.py
+│ ├── test_cons.py
+│ ├── test_databricks_credential.py
+│ ├── test_ingest.py
+│ └── **init**.py
+├── README.md
+└── requirements.txt
+
+## Contribuição
+
+Contribuições são bem-vindas! Sinta-se à vontade para abrir uma issue ou enviar um pull request.
+
+## Licença
+
+Este projeto está licenciado sob a Licença MIT. Veja o arquivo LICENSE para mais detalhes.
