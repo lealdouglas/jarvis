@@ -1,3 +1,4 @@
+from databricks.sdk.service.compute import Library, PythonPyPiLibrary
 from databricks.sdk.service.jobs import (
     CronSchedule,
     JobEmailNotifications,
@@ -5,11 +6,11 @@ from databricks.sdk.service.jobs import (
     PythonWheelTask,
     Task,
 )
-from databricks_objects.credential import work_credential
-from utils.cons import SUBSCRIPTION_ID
-from utils.helper import validate_args
-from utils.logger import log_info, log_error
-from databricks.sdk.service.compute import PythonPyPiLibrary, Library
+
+from jarvis.databricks_objects.credential import work_credential
+from jarvis.utils.cons import SUBSCRIPTION_ID
+from jarvis.utils.helper import validate_args
+from jarvis.utils.logger import log_error, log_info
 
 
 def validate_properties(properties: dict) -> None:

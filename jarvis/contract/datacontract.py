@@ -1,6 +1,6 @@
-from azure_objects.event_hub import create_event_hub_ingest
-from databricks_objects.workflow import create_job_ingest
-from utils.logger import log_error, log_info
+from jarvis.azure_objects.event_hub import create_event_hub_ingest
+from jarvis.databricks_objects.workflow import create_job_ingest
+from jarvis.utils.logger import log_error, log_info
 
 
 def get_value(properties: dict, keys: list, force_error: bool = False) -> str:

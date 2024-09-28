@@ -5,12 +5,14 @@
 # --------------------------------------------------------------------------
 
 import os
-from azure_objects.credential import auth_credential
-from azure.mgmt.eventhub import EventHubManagementClient
+
 from azure.core.exceptions import ResourceNotFoundError
-from utils.helper import validate_args
-from utils.cons import SUBSCRIPTION_ID
-from utils.logger import log_info, log_error
+from azure.mgmt.eventhub import EventHubManagementClient
+
+from jarvis.azure_objects.credential import auth_credential
+from jarvis.utils.cons import SUBSCRIPTION_ID
+from jarvis.utils.helper import validate_args
+from jarvis.utils.logger import log_error, log_info
 
 
 def get_eventhub_client() -> EventHubManagementClient:

@@ -1,13 +1,14 @@
 import datetime
 import os
-import pytz
 import sys
 
-from utils.logger import log_error, log_info
-from utils.variables import variables
+import pytz
 import yaml
-from contract.datacontract import *
-from actions.ingest.job_parameters import define_job_parameters
+
+from jarvis.actions.ingest.job_parameters import define_job_parameters
+from jarvis.contract.datacontract import *
+from jarvis.utils.logger import log_error, log_info
+from jarvis.utils.variables import variables
 
 
 def exec(config_path):

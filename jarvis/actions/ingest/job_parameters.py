@@ -1,4 +1,4 @@
-from contract.datacontract import get_value
+from jarvis.contract.datacontract import get_value
 
 
 def get_source_path(properties: dict[str, any]) -> str:

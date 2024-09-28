@@ -1,4 +1,4 @@
-from utils.logger import log_error, log_info
+from jarvis.utils.logger import log_error, log_info
 
 
 def validate_args(args_nedeed: list, args_user: dict):

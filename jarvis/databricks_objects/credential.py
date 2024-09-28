@@ -3,7 +3,7 @@ import sys
 
 from databricks.sdk import WorkspaceClient
 
-from utils.cons import *
+from jarvis.utils.cons import *
 
 
 def work_credential() -> WorkspaceClient:

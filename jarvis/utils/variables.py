@@ -1,11 +1,13 @@
 import os
-from azure.mgmt.resource import ResourceManagementClient
+
 from azure.mgmt.databricks import AzureDatabricksManagementClient
-from azure_objects.credential import auth_credential
-from databricks_objects.credential import work_credential
-from utils.cons import SUBSCRIPTION_ID
-from utils.helper import validate_args
-from utils.logger import log_error, log_info
+from azure.mgmt.resource import ResourceManagementClient
+
+from jarvis.azure_objects.credential import auth_credential
+from jarvis.databricks_objects.credential import work_credential
+from jarvis.utils.cons import SUBSCRIPTION_ID
+from jarvis.utils.helper import validate_args
+from jarvis.utils.logger import log_error, log_info
 
 
 def get_resource_group_name(client, domain: str) -> str:

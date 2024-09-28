@@ -1,5 +1,6 @@
 from azure.identity import ClientSecretCredential
-from utils.cons import *
+
+from jarvis.utils.cons import *
 
 
 def auth_credential() -> ClientSecretCredential:
