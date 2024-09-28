@@ -4,7 +4,7 @@ name: Pipeline coverage
 on: [push, pull_request]
 
 jobs:
-  test:
+  task-test-cov:
     runs-on: ubuntu-latest
 
     steps:

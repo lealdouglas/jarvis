@@ -1,4 +1,7 @@
-# Jarvis
+[![CI](https://github.com/lealdouglas/jarvis/actions/workflows/pipeline.yaml/badge.svg)](https://github.com/lealdouglas/jarvis/actions/workflows/pipeline.yaml)
+[![codecov](https://codecov.io/github/lealdouglas/jarvis/graph/badge.svg?token=6FNOHX7A2C)](https://codecov.io/github/lealdouglas/jarvis)
+
+# Jarvis Automation
 
 Framework responsável por criar componentes de plataforma e pipelines de dados.
 
