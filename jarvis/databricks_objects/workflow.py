@@ -7,7 +7,6 @@ from databricks.sdk.service.jobs import (
     Task,
 )
 
-from jarvis.contract.datacontract import get_value
 from jarvis.databricks_objects.credential import work_credential
 from jarvis.utils.cons import SUBSCRIPTION_ID
 from jarvis.utils.helper import validate_args
