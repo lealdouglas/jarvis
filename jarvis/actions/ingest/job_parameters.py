@@ -6,14 +6,9 @@ def get_source_path(properties: dict[str, any]) -> str:
     Retorna o caminho da fonte com base nas propriedades fornecidas.
     Returns the source path based on the provided properties.
     """
-    if (
-        properties['datacontract']['workflow']['source']['type']
-        == 'eventhub'
-    ):
+    if properties['datacontract']['workflow']['source']['type'] == 'eventhub':
         return f"/{properties['EVENTHUB_NAMESPACE_NAME']}/topic-{properties['DOMAIN']}-{properties['datacontract']['workflow']['model']}"
-    return get_value(
-        properties, ['datacontract', 'workflow', 'model'], True
-    )
+    return get_value(properties, ['datacontract', 'workflow', 'model'], True)
 
 
 def get_default_parameters(properties: dict[str, any]) -> list[str]:
@@ -37,9 +32,7 @@ def get_default_parameters(properties: dict[str, any]) -> list[str]:
         '-schema_name',
         'bronze',
         '-table_name',
-        get_value(
-            properties, ['datacontract', 'workflow', 'model'], True
-        ),
+        get_value(properties, ['datacontract', 'workflow', 'model'], True),
     ]
 
 

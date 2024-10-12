@@ -11,6 +11,13 @@ def run_actions(action, config_path):
         print('Ingesting data...')
         run.exec(config_path)
 
+    if action == 'prep':
+        # Importar o módulo de ingestão
+        from actions.prep import run
+
+        print('Prep data...')
+        run.exec(config_path)
+
 
 if __name__ == '__main__':
     if len(sys.argv) != 3:

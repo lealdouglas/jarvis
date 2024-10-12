@@ -7,6 +7,7 @@ from databricks.sdk.service.jobs import (
     Task,
 )
 
+from jarvis.contract.datacontract import get_value
 from jarvis.databricks_objects.credential import work_credential
 from jarvis.utils.cons import SUBSCRIPTION_ID
 from jarvis.utils.helper import validate_args
@@ -93,6 +94,73 @@ def create_new_job(w, job_name: str, properties: dict) -> None:
         raise
 
 
+def create_new_job_prep(w, job_name: str, properties: dict) -> None:
+    """
+    Cria um novo job de preparacao no Databricks.
+    """
+    try:
+        job = w.jobs.create(
+            name=job_name,
+            schedule=CronSchedule(
+                quartz_cron_expression=properties['datacontract'][
+                    'servicelevels'
+                ]['frequency']['cron'],
+                timezone_id='America/Sao_Paulo',
+                pause_status=PauseStatus('PAUSED'),
+            ),
+            email_notifications=JobEmailNotifications(
+                on_start=properties['datacontract']['workflow'][
+                    'email_notifications'
+                ]['on_start'],
+                on_success=properties['datacontract']['workflow'][
+                    'email_notifications'
+                ]['on_success'],
+                on_failure=properties['datacontract']['workflow'][
+                    'email_notifications'
+                ]['on_failure'],
+            ),
+            tasks=[
+                Task(
+                    description=f'job create_table {job_name}',
+                    python_wheel_task=PythonWheelTask(
+                        entry_point='carlton',
+                        package_name='carlton',
+                        parameters=[
+                            '-function',
+                            'create_table',
+                            '-table_name',
+                            get_value(
+                                properties,
+                                ['datacontract', 'workflow', 'model'],
+                                True,
+                            ),
+                        ],
+                    ),
+                    task_key='create-table-contract',
+                    existing_cluster_id=properties['CLUSTER_ID'],
+                    libraries=[
+                        Library(pypi=PythonPyPiLibrary(package='carlton'))
+                    ],
+                ),
+                Task(
+                    description=f'job prep {job_name}',
+                    depends_on=f'create_table_contract',
+                    python_wheel_task=PythonWheelTask(
+                        entry_point='main',
+                        package_name='definition_project',
+                    ),
+                    task_key=f'task-{job_name}',
+                    existing_cluster_id=properties['CLUSTER_ID'],
+                ),
+            ],
+        )
+        log_info(f'Job created successfully: {job_name}')
+        log_info(f'View the job at {w.config.host}/#job/{job.job_id}\n')
+    except Exception as e:
+        log_error(f'Error creating job: {e}')
+        raise
+
+
 def create_job_ingest(properties: dict[str, str]) -> None:
     """
     Função principal para criar um job de ingestão no Databricks com base nas propriedades fornecidas.
@@ -107,6 +175,29 @@ def create_job_ingest(properties: dict[str, str]) -> None:
 
         delete_existing_job(w, job_name)
         create_new_job(w, job_name, properties)
+
+    except KeyError as e:
+        raise log_error(f'Key error: {e}')
+    except ValueError as e:
+        raise log_error(f'Value error: {e}')
+    except Exception as e:
+        raise log_error(f'An unexpected error occurred: {e}')
+
+
+def create_job_prep(properties: dict[str, str]) -> None:
+    """
+    Função principal para criar um job de ingestão no Databricks com base nas propriedades fornecidas.
+
+    Parâmetros:
+    - properties (dict): Dicionário contendo as propriedades necessárias.
+    """
+    try:
+        validate_properties(properties)
+        job_name = get_job_name(properties)
+        w = work_credential()
+
+        delete_existing_job(w, job_name)
+        create_new_job_prep(w, job_name, properties)
 
     except KeyError as e:
         raise log_error(f'Key error: {e}')

@@ -1,5 +1,8 @@
 from jarvis.azure_objects.event_hub import create_event_hub_ingest
-from jarvis.databricks_objects.workflow import create_job_ingest
+from jarvis.databricks_objects.workflow import (
+    create_job_ingest,
+    create_job_prep,
+)
 from jarvis.utils.logger import log_error, log_info
 
 
@@ -79,7 +82,7 @@ def create_event_hub(properties: dict):
     log_info('Event Hub created successfully.')
 
 
-def create_databricks_workflow(properties: dict):
+def create_databricks_workflow(properties: dict, job_type: str = 'ingest'):
     """
     Função para criar um workflow no Databricks.
     Function to create a workflow in Databricks.
@@ -90,7 +93,10 @@ def create_databricks_workflow(properties: dict):
     - properties (dict): The dictionary of properties needed to create the workflow.
     """
     log_info('Creating Workflow Databricks...')
-    create_job_ingest(properties)
+    if job_type == 'ingest':
+        create_job_ingest(properties)
+    else:
+        create_job_prep(properties)
     log_info('Workflow Databricks created successfully.')
 
 
@@ -116,6 +122,34 @@ def datacontract_ingest_create_workflow(properties: dict):
             == 'databricks'
         ):
             create_databricks_workflow(properties)
+        else:
+            raise ValueError(
+                f"Error: Invalid source type '{properties['datacontract']['workflow']['source']['type']}'"
+            )
+    except KeyError as e:
+        raise log_error(f'Key error: {e}')
+    except ValueError as e:
+        raise log_error(e)
+    except Exception as e:
+        raise log_error(f'An unexpected error occurred: {e}')
+
+
+def datacontract_prep_create_workflow(properties: dict):
+    """
+    Função para criar workflows de ingestão com base nas propriedades fornecidas.
+    Function to create ingestion workflows based on the provided properties.
+
+    Parâmetros:
+    - properties (dict): O dicionário de propriedades necessário para criar os workflows.
+    Parameters:
+    - properties (dict): The dictionary of properties needed to create the workflows.
+    """
+    try:
+        if (
+            properties['datacontract']['servers']['development']['type']
+            == 'databricks'
+        ):
+            create_databricks_workflow(properties, job_type='prep')
         else:
             raise ValueError(
                 f"Error: Invalid source type '{properties['datacontract']['workflow']['source']['type']}'"
