@@ -30,7 +30,7 @@ def get_eventhub_name(properties: dict) -> str:
     Gera e retorna o nome do Event Hub com base nas propriedades fornecidas.
     Generates and returns the Event Hub name based on the provided properties.
     """
-    return f"topic-{properties['DOMAIN']}-{properties['datacontract']['ingest_workflow']['model']}"
+    return f"topic-{properties['DOMAIN']}-{properties['datacontract']['workflow']['model']}"
 
 
 def get_container_name(properties: dict) -> str:

@@ -106,7 +106,7 @@ def datacontract_ingest_create_workflow(properties: dict):
     """
     try:
         if (
-            properties['datacontract']['ingest_workflow']['source']['type']
+            properties['datacontract']['workflow']['source']['type']
             == 'eventhub'
         ):
             create_event_hub(properties)
@@ -118,7 +118,7 @@ def datacontract_ingest_create_workflow(properties: dict):
             create_databricks_workflow(properties)
         else:
             raise ValueError(
-                f"Error: Invalid source type '{properties['datacontract']['ingest_workflow']['source']['type']}'"
+                f"Error: Invalid source type '{properties['datacontract']['workflow']['source']['type']}'"
             )
     except KeyError as e:
         raise log_error(f'Key error: {e}')

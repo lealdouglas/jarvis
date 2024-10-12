@@ -7,12 +7,12 @@ def get_source_path(properties: dict[str, any]) -> str:
     Returns the source path based on the provided properties.
     """
     if (
-        properties['datacontract']['ingest_workflow']['source']['type']
+        properties['datacontract']['workflow']['source']['type']
         == 'eventhub'
     ):
-        return f"/{properties['EVENTHUB_NAMESPACE_NAME']}/topic-{properties['DOMAIN']}-{properties['datacontract']['ingest_workflow']['model']}"
+        return f"/{properties['EVENTHUB_NAMESPACE_NAME']}/topic-{properties['DOMAIN']}-{properties['datacontract']['workflow']['model']}"
     return get_value(
-        properties, ['datacontract', 'ingest_workflow', 'model'], True
+        properties, ['datacontract', 'workflow', 'model'], True
     )
 
 
@@ -38,7 +38,7 @@ def get_default_parameters(properties: dict[str, any]) -> list[str]:
         'bronze',
         '-table_name',
         get_value(
-            properties, ['datacontract', 'ingest_workflow', 'model'], True
+            properties, ['datacontract', 'workflow', 'model'], True
         ),
     ]
 
@@ -54,19 +54,19 @@ def get_carlton_source_parameters(
         '-file_extension',
         get_value(
             properties,
-            ['datacontract', 'ingest_workflow', 'source', 'format'],
+            ['datacontract', 'workflow', 'source', 'format'],
             True,
         ),
         '-path_src',
         src_path,
         '-file_header',
         get_value(
-            properties, ['datacontract', 'ingest_workflow', 'source', 'header']
+            properties, ['datacontract', 'workflow', 'source', 'header']
         ),
         '-file_delimiter',
         get_value(
             properties,
-            ['datacontract', 'ingest_workflow', 'source', 'delimiter'],
+            ['datacontract', 'workflow', 'source', 'delimiter'],
         ),
     ]
 

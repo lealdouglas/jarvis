@@ -24,7 +24,7 @@ def get_job_name(properties: dict) -> str:
     """
     Gera e retorna o nome do job com base nas propriedades fornecidas.
     """
-    return f"ingest-{properties['DOMAIN']}-{properties['datacontract']['ingest_workflow']['model']}"
+    return f"ingest-{properties['DOMAIN']}-{properties['datacontract']['workflow']['model']}"
 
 
 def delete_existing_job(w, job_name: str) -> None:
@@ -56,13 +56,13 @@ def create_new_job(w, job_name: str, properties: dict) -> None:
                 pause_status=PauseStatus('PAUSED'),
             ),
             email_notifications=JobEmailNotifications(
-                on_start=properties['datacontract']['ingest_workflow'][
+                on_start=properties['datacontract']['workflow'][
                     'email_notifications'
                 ]['on_start'],
-                on_success=properties['datacontract']['ingest_workflow'][
+                on_success=properties['datacontract']['workflow'][
                     'email_notifications'
                 ]['on_success'],
-                on_failure=properties['datacontract']['ingest_workflow'][
+                on_failure=properties['datacontract']['workflow'][
                     'email_notifications'
                 ]['on_failure'],
             ),
