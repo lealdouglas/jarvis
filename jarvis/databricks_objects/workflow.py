@@ -191,7 +191,6 @@ def create_job_prep(properties: dict[str, str]) -> None:
     - properties (dict): Dicionário contendo as propriedades necessárias.
     """
     try:
-        validate_properties(properties)
         job_name = get_job_name(properties)
         w = work_credential()
 
