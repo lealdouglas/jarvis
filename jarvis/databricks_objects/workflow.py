@@ -152,6 +152,9 @@ def create_new_job_prep(w, job_name: str, properties: dict) -> None:
                     ),
                     task_key=f'task-{job_name}',
                     existing_cluster_id=properties['CLUSTER_ID'],
+                    libraries=[
+                        Library(whl="/Workspace/jarvis/prep/definition_project/*.whl")
+                    ],
                 ),
             ],
         )
