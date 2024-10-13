@@ -5,6 +5,7 @@ from databricks.sdk.service.jobs import (
     PauseStatus,
     PythonWheelTask,
     Task,
+    TaskDependency,
 )
 
 from jarvis.databricks_objects.credential import work_credential
@@ -142,7 +143,9 @@ def create_new_job_prep(w, job_name: str, properties: dict) -> None:
                 ),
                 Task(
                     description=f'job prep {job_name}',
-                    depends_on=[{'task_key': 'create-table-contract'}],
+                    depends_on=[
+                        TaskDependency(task_key='create-table-contract')
+                    ],
                     python_wheel_task=PythonWheelTask(
                         entry_point='main',
                         package_name='definition_project',
