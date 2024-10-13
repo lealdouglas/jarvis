@@ -20,11 +20,14 @@ def validate_properties(properties: dict) -> None:
     validate_args(['CLUSTER_ID', 'CARLTON_SOURCE_PARAMETERS'], properties)
 
 
-def get_job_name(properties: dict) -> str:
+def get_job_name(properties: dict, job_type='ingest') -> str:
     """
     Gera e retorna o nome do job com base nas propriedades fornecidas.
     """
-    return f"ingest-{properties['DOMAIN']}-{properties['datacontract']['workflow']['model']}"
+    if job_type == 'ingest':
+        return f"ingest-{properties['DOMAIN']}-{properties['datacontract']['workflow']['model']}"
+    else:
+        return f"prep-{properties['DOMAIN']}-{properties['datacontract']['workflow']['model']}"
 
 
 def delete_existing_job(w, job_name: str) -> None:

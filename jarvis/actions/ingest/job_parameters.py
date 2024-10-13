@@ -72,7 +72,7 @@ def define_job_parameters(
     Defines the ingestion job parameters based on the provided properties.
     """
 
-    if job_type == 'ingest':
+    if job_type == 'prep':
         return {
             **properties,
             'table_prep': get_value(
