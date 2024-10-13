@@ -136,7 +136,7 @@ def create_new_job_prep(w, job_name: str, properties: dict) -> None:
                             properties['table_prep'],
                         ],
                     ),
-                    task_key='create-table-contract',
+                    task_key='task-create-table-contract',
                     existing_cluster_id=properties['CLUSTER_ID'],
                     libraries=[
                         Library(pypi=PythonPyPiLibrary(package='carlton'))
@@ -145,7 +145,7 @@ def create_new_job_prep(w, job_name: str, properties: dict) -> None:
                 Task(
                     description=f'job prep {job_name}',
                     depends_on=[
-                        TaskDependency(task_key='create-table-contract')
+                        TaskDependency(task_key='task-create-table-contract')
                     ],
                     python_wheel_task=PythonWheelTask(
                         entry_point='main',
