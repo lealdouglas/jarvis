@@ -31,6 +31,7 @@ faker = "^28.1.0"
 deltalake = "^0.19.1"
 pyspark = "^3.5.2"
 soda-core-spark-df = "^3.3.18"
+pyyaml = "^6.0.2"
 
 
 
