@@ -64,11 +64,24 @@ def get_carlton_source_parameters(
     ]
 
 
-def define_job_parameters(properties: dict[str, any]) -> dict[str, any]:
+def define_job_parameters(
+    properties: dict[str, any], job_type='ingest'
+) -> dict[str, any]:
     """
     Define os parâmetros do trabalho de ingestão com base nas propriedades fornecidas.
     Defines the ingestion job parameters based on the provided properties.
     """
+
+    if job_type == 'ingest':
+        return {
+            **properties,
+            'table_prep': get_value(
+                properties,
+                ['datacontract', 'workflow', 'model'],
+                True,
+            ),
+        }
+
     src_path = get_source_path(
         properties
     )  # Obtém o caminho da fonte / Gets the source path

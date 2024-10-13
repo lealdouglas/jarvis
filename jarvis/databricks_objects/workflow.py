@@ -128,11 +128,7 @@ def create_new_job_prep(w, job_name: str, properties: dict) -> None:
                             '-function',
                             'create_table',
                             '-table_name',
-                            get_value(
-                                properties,
-                                ['datacontract', 'workflow', 'model'],
-                                True,
-                            ),
+                            properties['table_prep'],
                         ],
                     ),
                     task_key='create-table-contract',

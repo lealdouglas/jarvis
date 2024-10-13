@@ -62,7 +62,9 @@ def exec(config_path):
         with open(config_path, 'r') as file:
             properties['datacontract'] = yaml.safe_load(file)
 
-        datacontract_prep_create_workflow(variables(get_domain(properties)))
+        datacontract_prep_create_workflow(
+            define_job_parameters(variables(get_domain(properties)), 'prep')
+        )
 
     except Exception as e:
         raise log_error(f'Erro ao processar ingestão: {e}')
