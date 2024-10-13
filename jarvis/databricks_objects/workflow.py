@@ -142,7 +142,7 @@ def create_new_job_prep(w, job_name: str, properties: dict) -> None:
                 ),
                 Task(
                     description=f'job prep {job_name}',
-                    depends_on=f'create_table_contract',
+                    depends_on=[{'task_key': 'create-table-contract'}],
                     python_wheel_task=PythonWheelTask(
                         entry_point='main',
                         package_name='definition_project',
