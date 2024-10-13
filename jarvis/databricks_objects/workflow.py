@@ -8,7 +8,9 @@ from databricks.sdk.service.jobs import (
     TaskDependency,
 )
 
+
 from jarvis.databricks_objects.credential import work_credential
+from jarvis.databricks_objects.find_whl import get_lasted_version_whl
 from jarvis.utils.cons import SUBSCRIPTION_ID
 from jarvis.utils.helper import validate_args
 from jarvis.utils.logger import log_error, log_info
@@ -154,7 +156,9 @@ def create_new_job_prep(w, job_name: str, properties: dict) -> None:
                     existing_cluster_id=properties['CLUSTER_ID'],
                     libraries=[
                         Library(
-                            whl='/Workspace/jarvis/prep/definition_project/*.whl'
+                            whl=get_lasted_version_whl(
+                                w, '/Workspace/jarvis/prep/definition_project/'
+                            )
                         )
                     ],
                 ),
