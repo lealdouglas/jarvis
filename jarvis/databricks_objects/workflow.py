@@ -8,7 +8,6 @@ from databricks.sdk.service.jobs import (
     TaskDependency,
 )
 
-
 from jarvis.databricks_objects.credential import work_credential
 from jarvis.databricks_objects.find_whl import get_lasted_version_whl
 from jarvis.utils.cons import SUBSCRIPTION_ID
