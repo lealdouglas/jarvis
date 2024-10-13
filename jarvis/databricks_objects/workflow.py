@@ -193,7 +193,7 @@ def create_job_prep(properties: dict[str, str]) -> None:
     - properties (dict): Dicionário contendo as propriedades necessárias.
     """
     try:
-        job_name = get_job_name(properties)
+        job_name = get_job_name(properties, 'prep')
         w = work_credential()
 
         delete_existing_job(w, job_name)
