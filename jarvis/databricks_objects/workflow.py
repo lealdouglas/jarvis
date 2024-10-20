@@ -54,7 +54,7 @@ def create_mock_job(w, job_name: str, properties: dict) -> None:
         job = w.jobs.create(
             name=f'mock-{job_name}',
             schedule=CronSchedule(
-                quartz_cron_expression='*/5 * * * *',
+                quartz_cron_expression='49 29/30 * * * ?',
                 timezone_id='America/Sao_Paulo',
                 pause_status=PauseStatus('PAUSED'),
             ),
