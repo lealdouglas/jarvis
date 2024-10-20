@@ -25,12 +25,15 @@ def get_eventhub_client() -> EventHubManagementClient:
     )
 
 
-def get_eventhub_name(properties: dict) -> str:
+def get_eventhub_name(properties: dict) -> dict:
     """
     Gera e retorna o nome do Event Hub com base nas propriedades fornecidas.
     Generates and returns the Event Hub name based on the provided properties.
     """
-    return f"topic-{properties['DOMAIN']}-{properties['datacontract']['workflow']['model']}"
+    properties[
+        'EVENT_HUB'
+    ] = f"topic-{properties['DOMAIN']}-{properties['datacontract']['workflow']['model']}"
+    return properties
 
 
 def get_container_name(properties: dict) -> str:
@@ -44,7 +47,6 @@ def get_container_name(properties: dict) -> str:
 def create_eventhub(
     eventhub_client: EventHubManagementClient,
     properties: dict,
-    eventhub_name: str,
     container_name: str,
 ) -> None:
     """
@@ -57,7 +59,7 @@ def create_eventhub(
     eventhub = eventhub_client.event_hubs.create_or_update(
         RESOURCE_GROUP_NAME,
         properties['EVENTHUB_NAMESPACE_NAME'],
-        eventhub_name,
+        properties['EVENT_HUB'],
         {
             'message_retention_in_days': '1',
             'partition_count': '1',
@@ -82,7 +84,6 @@ def create_eventhub(
 def get_or_create_eventhub(
     eventhub_client: EventHubManagementClient,
     properties: dict,
-    eventhub_name: str,
 ) -> None:
     """
     Tenta obter o Event Hub, se não existir, cria um novo.
@@ -95,7 +96,9 @@ def get_or_create_eventhub(
         # Tenta obter o Event Hub
         # Tries to get the Event Hub
         eventhub = eventhub_client.event_hubs.get(
-            RESOURCE_GROUP_NAME, EVENTHUB_NAMESPACE_NAME, eventhub_name
+            RESOURCE_GROUP_NAME,
+            EVENTHUB_NAMESPACE_NAME,
+            properties['EVENT_HUB'],
         )
         log_info('Topico Event Hub já existe: {}'.format(eventhub))
     except ResourceNotFoundError:
@@ -104,13 +107,14 @@ def get_or_create_eventhub(
         create_eventhub(
             eventhub_client,
             properties,
-            eventhub_name,
             get_container_name(properties),
         )
         # Obtém o Event Hub criado
         # Gets the created Event Hub
         eventhub = eventhub_client.event_hubs.get(
-            RESOURCE_GROUP_NAME, EVENTHUB_NAMESPACE_NAME, eventhub_name
+            RESOURCE_GROUP_NAME,
+            EVENTHUB_NAMESPACE_NAME,
+            properties['EVENT_HUB'],
         )
         log_info('Get EventHub: {}'.format(eventhub))
 
@@ -136,5 +140,5 @@ def create_event_hub_ingest(properties: dict) -> None:
     )
 
     eventhub_client = get_eventhub_client()
-    eventhub_name = get_eventhub_name(properties)
-    get_or_create_eventhub(eventhub_client, properties, eventhub_name)
+    properties = get_eventhub_name(properties)
+    get_or_create_eventhub(eventhub_client, properties)

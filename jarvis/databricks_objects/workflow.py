@@ -46,6 +46,59 @@ def delete_existing_job(w, job_name: str) -> None:
         raise
 
 
+def create_mock_job(w, job_name: str, properties: dict) -> None:
+    """
+    Cria um novo job para simular eventos event hub.
+    """
+    try:
+        job = w.jobs.create(
+            name=f'mock-{job_name}',
+            schedule=CronSchedule(
+                quartz_cron_expression='*/5 * * * *',
+                timezone_id='America/Sao_Paulo',
+                pause_status=PauseStatus('PAUSED'),
+            ),
+            email_notifications=JobEmailNotifications(
+                on_start=properties['datacontract']['workflow'][
+                    'email_notifications'
+                ]['on_start'],
+                on_success=properties['datacontract']['workflow'][
+                    'email_notifications'
+                ]['on_success'],
+                on_failure=properties['datacontract']['workflow'][
+                    'email_notifications'
+                ]['on_failure'],
+            ),
+            tasks=[
+                Task(
+                    description=f'job mock data mock-{job_name}',
+                    python_wheel_task=PythonWheelTask(
+                        entry_point='carlton',
+                        package_name='carlton',
+                        parameters=[
+                            '-function',
+                            'mock_data',
+                            '-event_hub_namespace',
+                            properties['EVENTHUB_NAMESPACE_NAME'],
+                            '-event_hub_name',
+                            properties['EVENT_HUB'],
+                        ],
+                    ),
+                    task_key=f'task-mock-{job_name}',
+                    existing_cluster_id=properties['CLUSTER_ID'],
+                    libraries=[
+                        Library(pypi=PythonPyPiLibrary(package='carlton'))
+                    ],
+                )
+            ],
+        )
+        log_info(f'Job created successfully: {job_name}')
+        log_info(f'View the job at {w.config.host}/#job/{job.job_id}\n')
+    except Exception as e:
+        log_error(f'Error creating job: {e}')
+        raise
+
+
 def create_new_job(w, job_name: str, properties: dict) -> None:
     """
     Cria um novo job de ingestão no Databricks.
@@ -183,6 +236,13 @@ def create_job_ingest(properties: dict[str, str]) -> None:
         w = work_credential()
 
         delete_existing_job(w, job_name)
+
+        if (
+            properties['datacontract']['workflow']['source']['job_mock']
+            == True
+        ):
+            create_mock_job(w, job_name, properties)
+
         create_new_job(w, job_name, properties)
 
     except KeyError as e:
