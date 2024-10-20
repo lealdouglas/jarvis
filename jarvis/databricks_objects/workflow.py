@@ -239,7 +239,8 @@ def create_job_ingest(properties: dict[str, str]) -> None:
 
         if (
             properties['datacontract']['workflow']['source']['job_mock']
-            == True
+            == True & properties['datacontract']['workflow']['source']['type']
+            == 'eventhub'
         ):
             create_mock_job(w, job_name, properties)
 
