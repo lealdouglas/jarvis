@@ -243,6 +243,7 @@ def create_job_ingest(properties: dict[str, str]) -> None:
             and properties['datacontract']['workflow']['source']['type']
             == 'eventhub'
         ):
+            delete_existing_job(w, f"mock-{job_name}")
             create_mock_job(w, job_name, properties)
 
         create_new_job(w, job_name, properties)
