@@ -82,6 +82,8 @@ def create_mock_job(w, job_name: str, properties: dict) -> None:
                             properties['EVENTHUB_NAMESPACE_NAME'],
                             '-event_hub_name',
                             properties['EVENT_HUB'],
+                            '-sleep_time',
+                            "60"
                         ],
                     ),
                     task_key=f'task-mock-{job_name}',
