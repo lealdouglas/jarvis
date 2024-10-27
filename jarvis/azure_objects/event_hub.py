@@ -73,7 +73,7 @@ def create_eventhub(
                     'name': 'EventHubArchive.AzureBlockBlob',
                     'storage_account_resource_id': f'/subscriptions/{SUBSCRIPTION_ID}/resourceGroups/{RESOURCE_GROUP_NAME}/providers/Microsoft.Storage/storageAccounts/{STORAGE_ACCOUNT_NAME}',
                     'blob_container': container_name,
-                    'archive_name_format': '{Namespace}/{EventHub}/{PartitionId}/{Year}/{Month}/{Day}/{Hour}/{Minute}/{Second}',
+                    'archive_name_format': '{Namespace}/{EventHub}/{Year}/{Month}/{Day}/{PartitionId}/{Hour}_{Minute}_{Second}',
                 },
             },
         },
