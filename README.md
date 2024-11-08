@@ -54,45 +54,41 @@ pipeline = jarvis.run_pipeline('pipeline_name')
 
 A estrutura do projeto é organizada da seguinte forma:
 
+```shell
 jarvis/
 ├── jarvis/
-│ ├── actions/
-│ │ ├── ingest/
-│ │ │ ├── job_parameters.py
-│ │ │ ├── run.py
-│ │ │ └── **init**.py
-│ │ ├── model_transform/
-│ │ │ └── databricks/
-│ │ │ └── asset_bundles/
-│ │ │ └── **init**.py
-│ ├── azure_objects/
-│ │ ├── credential.py
-│ │ ├── event_hub.py
-│ │ └── **init**.py
-│ ├── ci/
-│ │ └── cli.py
-│ ├── contract/
-│ │ └── datacontract.py
-│ ├── databricks_objects/
-│ │ ├── credential.py
-│ │ ├── workflow.py
-│ │ └── **init**.py
-│ ├── utils/
-│ │ ├── cons.py
-│ │ ├── helper.py
-│ │ ├── logger.py
-│ │ └── variables.py
-│ ├── main.py
-│ └── **init**.py
+│   ├── actions/
+│   │   ├── ingest/
+│   │   │   ├── job_parameters.py
+│   │   │   ├── run.py
+│   │   │   └── __init__.py
+│   │   ├── model_transform/
+│   │   │   └── databricks/
+│   │   │   └── asset_bundles/
+│   │   │   └── __init__.py
+│   ├── azure_objects/
+│   │   ├── credential.py
+│   │   ├── event_hub.py
+│   │   └── __init__.py
+│   ├── ci/
+│   │   └── cli.py
+│   ├── contract/
+│   │   └── datacontract.py
+│   ├── databricks_objects/
+│   │   ├── credential.py
+│   │   ├── workflow.py
+│   │   └── __init__.py
+│   ├── utils/
+│   │   ├── cons.py
+│   │   ├── helper.py
+│   │   ├── logger.py
+│   │   └── variables.py
+│   ├── main.py
+│   └── __init__.py
 ├── tests/
-│ ├── test_azure_credential.py
-│ ├── test_cli.py
-│ ├── test_cons.py
-│ ├── test_databricks_credential.py
-│ ├── test_ingest.py
-│ └── **init**.py
-├── README.md
+├── [README.md](http://_vscodecontentref_/1)
 └── requirements.txt
+```
 
 ## Contribuição
 

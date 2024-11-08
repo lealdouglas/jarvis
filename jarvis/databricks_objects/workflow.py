@@ -83,7 +83,7 @@ def create_mock_job(w, job_name: str, properties: dict) -> None:
                             '-event_hub_name',
                             properties['EVENT_HUB'],
                             '-sleep_time',
-                            "60"
+                            '60',
                         ],
                     ),
                     task_key=f'task-mock-{job_name}',
@@ -245,7 +245,7 @@ def create_job_ingest(properties: dict[str, str]) -> None:
             and properties['datacontract']['workflow']['source']['type']
             == 'eventhub'
         ):
-            delete_existing_job(w, f"mock-{job_name}")
+            delete_existing_job(w, f'mock-{job_name}')
             create_mock_job(w, job_name, properties)
 
         create_new_job(w, job_name, properties)
